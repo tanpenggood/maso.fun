@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>记录自己学习记录点滴</title>
+  <meta name="keywords" content="tanpenggood,记录自己学习记录点滴,Java">
+  <meta name="description" content="我怀着一份赤子之心">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="format-detection" content="telephone=no">
+  <link rel="icon" href="images/logo.png">
+  <style type="text/css">
+    * {
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background: url('/images/csdn-bg.jpg') repeat;
+    }
+    .container {
+      font-size: 22px;
+      background: linear-gradient(to left, transparent, 
+                                           rgba(255, 255, 255, 0.1), 
+                                           rgba(255, 255, 255, 0.3), 
+                                           rgba(255, 255, 255, 0.5), 
+                                           rgba(255, 255, 255, 0.7), 
+                                           rgba(255, 255, 255, 0.8), 
+                                           rgba(255, 255, 255, 0.9), 
+                                           rgba(255, 255, 255, 0.8), 
+                                           rgba(255, 255, 255, 0.7), 
+                                           rgba(255, 255, 255, 0.5), 
+                                           rgba(255, 255, 255, 0.3), 
+                                           rgba(255, 255, 255, 0.1), 
+                                           transparent);
+      height: 100vh;
+      margin: 0 auto;
+    }
+    .header-container {
+      padding-top: 60px;
+    }
+    .content-container {
+      margin-top: 60px;
+    }
+    .footer-container {
+      font-size: 14px;
+      position: fixed;
+      bottom: 10px;
+      left: 50%;
+      transform: translate(-50%, -50%)
+    }
+    .text-center {
+      text-align: center;
+    }
+    a {
+      text-decoration:none;
+    }
+    img {
+      height:100px;
+    }
+    .red-text {
+      color:red;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header-container text-center">
+      <b style="color: rgba(0, 0, 0, 0.8)">记 录 自 己 学 习 记 录 点 滴</b>
+    </div>
+    <div class="content-container text-center">
+      <br/><a href="http://www.runoob.com" title="www.runoob.com">菜鸟教程 - 学的不仅是技术，更是梦想！</a><br/>
+      <br/><a href="https://docs.oracle.com/javase/8/" title="Oracle (Java SE) 8 Release 8" class="red-text">Oracle (Java SE) 8 Release 8</a><br/>
+      <br/><a id="showdoc">showdoc</a><br/>
+      <br/><a id="teamx">teamx</a><br/>
+    </div>
+  </div>
+
+  <div style="position: fixed;top: 30px;right: 30px;">
+    <p>
+      <a style="color: #fff;" 
+         href="https://github.com/tanpenggood/jeecg-spring-boot-starter"
+         title="基于jeecg-boot封装的spring-boot-starter"
+      >jeecg-spring-boot-starter</a>
+      <iframe src="https://ghbtns.com/github-btn.html?user=tanpenggood&repo=jeecg-spring-boot-starter&type=watch&count=true"
+            allowtransparency="true" frameborder="0" scrolling="0" width="110" height="20"></iframe>
+    </p>
+    <br/>
+    <p>
+      <a style="color: #fff;" 
+         href="https://github.com/tanpenggood/tp-practice"
+         title="千里之行，始于足下。"
+      >tanpenggood/tp-practice</a>
+      <iframe src="https://ghbtns.com/github-btn.html?user=tanpenggood&repo=tp-practice&type=watch&count=true"
+            allowtransparency="true" frameborder="0" scrolling="0" width="110" height="20"></iframe>
+    </p>
+    <br/>
+    <p>
+      <a style="color: #fff;" 
+         href="https://github.com/tanpenggood/hero-helper"
+         title="Hero (a page online game) helper."
+      >tanpenggood/hero-helper</a>
+      <iframe src="https://ghbtns.com/github-btn.html?user=tanpenggood&repo=hero-helper&type=watch&count=true"
+            allowtransparency="true" frameborder="0" scrolling="0" width="110" height="20"></iframe>
+    </p>
+  </div>
+
+  <div class="footer-container">
+    <span id="period"></span>
+    <span>&nbsp;·&nbsp;</span>
+    <span><a href="https://beian.miit.gov.cn">蜀ICP备19019750号</a></span>
+    <span>&nbsp;·&nbsp;</span>
+    <span>Power by <a href="https://github.com/tanpenggood">tanpenggood</a></span>
+  </div>
+
+</body>
+<script type="text/javascript">
+  var a_ = document.getElementsByTagName("a");
+  for(i=0;i<a_.length;i++){
+    a_[i].setAttribute("target","_blank");
+  }
+
+  var host = location.host
+  var host1 = host.substring(0, host.lastIndexOf('.'));
+  var part1 = host1.substring(host1.lastIndexOf('.') + 1);
+  var part2 = host.substring(host.lastIndexOf('.') + 1);
+  var domain = `${part1}.${part2}`;
+
+  // set showdoc
+  var showdoc = document.getElementById("showdoc");
+  var showdocUrl = `http://showdoc.${domain}`;
+  showdoc.setAttribute("title", showdocUrl);
+  showdoc.setAttribute("href", showdocUrl);
+  
+  // set teamx
+  var teamx = document.getElementById("teamx");
+  var teamxUrl = `http://teamx.${domain}`;
+  teamx.setAttribute("title", teamxUrl);
+  teamx.setAttribute("href", teamxUrl);
+
+  // set period
+  var now = new Date()
+  document.getElementById("period").innerText = `${domain} © 2017 - ${now.getFullYear()}`
+</script>
+</html>
+
