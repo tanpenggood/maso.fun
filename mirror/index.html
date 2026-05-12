@@ -286,7 +286,8 @@
         <!-- 权限提示 -->
         <div class="permission-tip" id="permission-tip">
           <div class="icon">📷</div>
-          <div>请允许使用摄像头<br><small>开启你的魔法镜之旅 ✨</small></div>
+          <div id="tip-text">请允许使用摄像头<br><small>开启你的魔法镜之旅 ✨</small></div>
+          <button class="btn" id="btn-retry" style="width:auto;padding:0 20px;border-radius:20px;font-size:0.85rem;margin-top:6px;">🔄 重试</button>
         </div>
       </div>
     </div>
@@ -329,10 +330,27 @@
     async function startCamera(front) {
       if (currentStream) {
         currentStream.getTracks().forEach(t => t.stop());
+        await new Promise(r => setTimeout(r, 100));
         currentStream = null;
       }
 
-      async function tryStart(videoConstraints) {
+      // 预热设备列表 (Chrome 需要 enumerateDevices 来"唤醒"摄像头)
+      let allDevices = [];
+      try {
+        allDevices = await navigator.mediaDevices.enumerateDevices();
+      } catch (_) {}
+      const videoDevices = allDevices.filter(d => d.kind === 'videoinput');
+
+      // 匹配前置/后置摄像头
+      const frontKeywords = ['front', 'user', 'face'];
+      const backKeywords = ['back', 'environment', 'rear'];
+      const target = front
+        ? videoDevices.find(d => frontKeywords.some(k => d.label.toLowerCase().includes(k))) || videoDevices[0]
+        : videoDevices.find(d => backKeywords.some(k => d.label.toLowerCase().includes(k))) || videoDevices[videoDevices.length - 1];
+
+      const lastError = {};
+
+      const tryStart = async (videoConstraints) => {
         const stream = await navigator.mediaDevices.getUserMedia({
           video: videoConstraints,
           audio: false,
@@ -341,33 +359,36 @@
         video.srcObject = stream;
         tip.style.display = 'none';
         return true;
+      };
+
+      // 1) 用 deviceId 精确指定摄像头 (最稳定)
+      if (target && target.deviceId) {
+        if (await tryStart({ deviceId: { exact: target.deviceId } })
+          .catch(() => false)) return;
       }
 
-      const lastError = {};
-
-      // attempt 1: full constraints
-      if (await tryStart({
-        facingMode: front ? 'user' : { exact: 'environment' },
-        width: { ideal: 720 },
-        height: { ideal: 960 },
-      }).catch(e => { lastError.name = e.name; lastError.message = e.message; return false; })) return;
-
-      // attempt 2: same facing, no resolution
+      // 2) 仅 facingMode，无分辨率
       if (await tryStart({
         facingMode: front ? 'user' : 'environment',
-      }).catch(() => false)) return;
+        width: { ideal: 640 },
+      }).catch(e => { lastError.name = e.name; lastError.message = e.message; return false; })) return;
 
-      // attempt 3: any camera at all
+      // 3) 任意摄像头
       if (await tryStart(true).catch(() => false)) return;
 
       tip.style.display = 'flex';
       tip.querySelector('.icon').textContent = '😿';
-      tip.querySelector('div').innerHTML = `摄像头无法访问<br><small>${lastError.name}: ${lastError.message}</small>`;
+      tip.querySelector('#tip-text').innerHTML = `摄像头无法访问<br><small>${lastError.name}: ${lastError.message}</small>`;
     }
 
     // ====== 切换摄像头 ======
     document.getElementById('btn-switch').addEventListener('click', () => {
       useFront = !useFront;
+      startCamera(useFront);
+    });
+
+    // ====== 重试 ======
+    document.getElementById('btn-retry').addEventListener('click', () => {
       startCamera(useFront);
     });
 
