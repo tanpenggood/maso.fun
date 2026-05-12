@@ -331,37 +331,38 @@
         currentStream.getTracks().forEach(t => t.stop());
         currentStream = null;
       }
-      try {
-        const constraints = {
-          video: {
-            facingMode: front ? 'user' : { exact: 'environment' },
-            width: { ideal: 720 },
-            height: { ideal: 960 },
-          },
+
+      async function tryStart(videoConstraints) {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: videoConstraints,
           audio: false,
-        };
-        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        });
         currentStream = stream;
         video.srcObject = stream;
         tip.style.display = 'none';
-      } catch (err) {
-        // 后置摄像头可能不支持 exact，再降级试一次
-        if (!front) {
-          try {
-            const stream = await navigator.mediaDevices.getUserMedia({
-              video: { facingMode: 'environment' },
-              audio: false,
-            });
-            currentStream = stream;
-            video.srcObject = stream;
-            tip.style.display = 'none';
-            return;
-          } catch (_) {}
-        }
-        tip.style.display = 'flex';
-        tip.querySelector('.icon').textContent = '😿';
-        tip.querySelector('div').innerHTML = '摄像头无法访问<br><small>请检查权限设置 💔</small>';
+        return true;
       }
+
+      const lastError = {};
+
+      // attempt 1: full constraints
+      if (await tryStart({
+        facingMode: front ? 'user' : { exact: 'environment' },
+        width: { ideal: 720 },
+        height: { ideal: 960 },
+      }).catch(e => { lastError.name = e.name; lastError.message = e.message; return false; })) return;
+
+      // attempt 2: same facing, no resolution
+      if (await tryStart({
+        facingMode: front ? 'user' : 'environment',
+      }).catch(() => false)) return;
+
+      // attempt 3: any camera at all
+      if (await tryStart(true).catch(() => false)) return;
+
+      tip.style.display = 'flex';
+      tip.querySelector('.icon').textContent = '😿';
+      tip.querySelector('div').innerHTML = `摄像头无法访问<br><small>${lastError.name}: ${lastError.message}</small>`;
     }
 
     // ====== 切换摄像头 ======
